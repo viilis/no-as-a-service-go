@@ -25,6 +25,7 @@ func main() {
 	limiterStore := middleware.NewRateLimiterMemoryStore(20)
 
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORS("*"))
 	e.Use(middleware.RateLimiter(limiterStore))
 
 	e.GET("/no", func(c *echo.Context) error {
