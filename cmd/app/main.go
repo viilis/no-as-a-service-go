@@ -30,7 +30,7 @@ func main() {
 	var reasons = []string{}
 
 	if err := json.Unmarshal(b, &reasons); err != nil {
-		log.Fatalf("Couldn't marshal file: %v\n", err)
+		log.Fatalf("Couldn't unmarshal file: %v\n", err)
 	}
 
 	// Configure and start server
