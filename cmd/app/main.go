@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
+	"math/rand/v2"
 	"net/http"
 	"os"
 
@@ -12,14 +13,27 @@ import (
 )
 
 func main() {
+	// Envs and inital setup
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
 	port := os.Getenv("PORT")
-	fmt.Println(port)
 
+	// Data reading
+	b, err := os.ReadFile("reasons.json")
+	if err != nil {
+		log.Fatalf("Failed to read file: %v\n", err)
+	}
+
+	var reasons = []string{}
+
+	if err := json.Unmarshal(b, &reasons); err != nil {
+		log.Fatalf("Couldn't marshal file: %v\n", err)
+	}
+
+	// Configure and start server
 	e := echo.New()
 
 	limiterStore := middleware.NewRateLimiterMemoryStore(20)
@@ -29,7 +43,9 @@ func main() {
 	e.Use(middleware.RateLimiter(limiterStore))
 
 	e.GET("/no", func(c *echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]string{"message": "Hello, World!"})
+		reason := reasons[rand.IntN(len(reasons)-1)]
+
+		return c.JSON(http.StatusOK, map[string]string{"reason": reason})
 	})
 
 	if err := e.Start(":" + port); err != nil {
