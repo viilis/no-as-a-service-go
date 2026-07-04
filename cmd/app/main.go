@@ -14,12 +14,18 @@ import (
 
 func main() {
 	// Envs and inital setup
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	appEnv := os.Getenv("APP_ENV")
+
+	if appEnv == "" {
+		appEnv = "dev"
 	}
 
+	godotenv.Load(".env." + appEnv)
 	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8000"
+	}
 
 	// Data reading
 	b, err := os.ReadFile("reasons.json")
@@ -43,7 +49,7 @@ func main() {
 	e.Use(middleware.RateLimiter(limiterStore))
 
 	e.GET("/no", func(c *echo.Context) error {
-		reason := reasons[rand.IntN(len(reasons)-1)]
+		reason := reasons[rand.IntN(len(reasons))]
 
 		return c.JSON(http.StatusOK, map[string]string{"reason": reason})
 	})

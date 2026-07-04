@@ -1,0 +1,18 @@
+# Commons
+http/
+assets/
+Dockerfile
+README.md
+CHANGELOG.md
+CLAUDE.md
+.env.example
+cliff.toml
+makefile
+
+# Git
+.git
+.gitattributes
+.gitignore
+
+# Go
+tmp/
